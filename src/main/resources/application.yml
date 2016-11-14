@@ -1,0 +1,4 @@
+ribbon.eureka.enabled: false
+feign.hystrix.enabled: false
+endpoints.enabled: true
+server.port: 9099

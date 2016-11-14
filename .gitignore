@@ -1,0 +1,11 @@
+.classpath
+*.orig
+.project
+*.iml
+.settings/
+.idea/
+target/
+build/
+
+/docker-compose.yml
+.DS_Store
