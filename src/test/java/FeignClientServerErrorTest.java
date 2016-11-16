@@ -4,6 +4,7 @@ import com.netflix.loadbalancer.BaseLoadBalancer;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;
 import com.opentable.extension.BodyTransformer;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +19,7 @@ import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.cloud.netflix.ribbon.RibbonClient;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.SpanReporter;
+import org.springframework.cloud.sleuth.instrument.rxjava.RxJavaAutoConfiguration;
 import org.springframework.cloud.sleuth.util.ArrayListSpanAccumulator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,6 +61,11 @@ public class FeignClientServerErrorTest {
                     .notifier(new Slf4jNotifier(true))
                     .extensions(new BodyTransformer()));
 
+    @Before
+    public void setUp() throws Exception {
+        arrayListSpanAccumulator.getSpans().clear();
+    }
+
     @Test
     public void test_feignReturnsVoid() throws Exception {
         wireMockRule.stubFor(post(urlEqualTo("/test/void"))
@@ -71,7 +78,7 @@ public class FeignClientServerErrorTest {
         wireMockRule.verify(postRequestedFor(urlEqualTo("/test/void")));
 
         List<Span> spans = arrayListSpanAccumulator.getSpans();
-        assertThat(spans.size(), is(2));
+        assertThat(spans.size(), is(3));
     }
 
     @Test
@@ -86,7 +93,7 @@ public class FeignClientServerErrorTest {
         wireMockRule.verify(postRequestedFor(urlEqualTo("/test")));
 
         List<Span> spans = arrayListSpanAccumulator.getSpans();
-        assertThat(spans.size(), is(2));
+        assertThat(spans.size(), is(3));
     }
 
     @RestController
@@ -120,7 +127,7 @@ public class FeignClientServerErrorTest {
     }
 
     @Configuration
-    @EnableAutoConfiguration
+    @EnableAutoConfiguration(exclude = RxJavaAutoConfiguration.class)
     @EnableFeignClients
     @RibbonClient(value = "fooservice", configuration = SimpleRibbonClientConfiguration.class)
     public static class TestConfiguration {

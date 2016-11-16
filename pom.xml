@@ -34,6 +34,11 @@
             <scope>import</scope>
         </dependency>
         <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-sleuth-core</artifactId>
+            <version>1.0.10.RELEASE</version>
+        </dependency>
+        <dependency>
             <groupId>com.opentable</groupId>
             <artifactId>wiremock-body-transformer</artifactId>
             <version>1.1.1</version>
